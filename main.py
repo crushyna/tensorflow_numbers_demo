@@ -1,6 +1,7 @@
 import PIL
 from PIL import ImageTk, Image, ImageDraw
 from tkinter import *
+from tkinter import messagebox
 from number_recognizer import numberRecognition
 import pandas as pd
 #import numpy as np
@@ -30,15 +31,23 @@ def save():
     print(fileName)
     return(fileName)
 
+def continouosMessageBox(text):
+        top = Toplevel(root)
+        Label(top, text=text).pack()
+        Button(top, text="OK", command=top.destroy).pack(pady=5)
+
 def recognizeNumber():
-    numberRecognition(fileName)
+    #messagebox.showinfo("Number recognition", "Please wait...")
+    #continouosMessageBox("Calculating, please wait...")
+    recognizedNumber = numberRecognition(fileName)
+    messagebox.showinfo("Number recognition", "Recognized number: {}".format(recognizedNumber))
 
 def paint(event):
     # python_green = "#476042"
     x1, y1 = (event.x - 1), (event.y - 1)
     x2, y2 = (event.x + 1), (event.y + 1)
-    cv.create_oval(x1, y1, x2, y2, fill="black",width=5)
-    draw.line([x1, y1, x2, y2],fill="black",width=5)
+    cv.create_oval(x1, y1, x2, y2, fill="black",width=15)
+    draw.line([x1, y1, x2, y2],fill="black",width=15)
 
 root = Tk()
 

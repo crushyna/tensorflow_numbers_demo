@@ -22,9 +22,9 @@ def numberRecognition(file_to_recognize):
     n_output = 10   # number (digit 0-9)
 
     learning_rate = 1e-4
-    n_iterations = 1000
+    n_iterations = 1800
     batch_size = 128
-    dropout = 0.5
+    dropout = 1.0
 
     # building tensorflow graph
     X = tf.placeholder("float", [None, n_input])
@@ -52,6 +52,7 @@ def numberRecognition(file_to_recognize):
     layer_3 = tf.add(tf.matmul(layer_2, weights['w3']), biases['b3'])
     layer_drop = tf.nn.dropout(layer_3, keep_prob)
     output_layer = tf.matmul(layer_3, weights['out']) + biases['out']
+    #output_layer = tf.matmul(layer_drop, weights['out']) + biases['out']
 
     ## Adam optimizer implementation
     cross_entropy = tf.reduce_mean(
@@ -77,7 +78,7 @@ def numberRecognition(file_to_recognize):
             })
 
     # print loss and accuracy (per minibatch)
-        if i % 100 == 0:
+        if i % 200 == 0:
             minibatch_loss, minibatch_accuracy = sess.run(
                 [cross_entropy, accuracy],
                 feed_dict={X: batch_x, Y: batch_y, keep_prob: 1.0}
@@ -95,11 +96,14 @@ def numberRecognition(file_to_recognize):
     print("\nAccuracy on test set:", test_accuracy)
 
     # image load
-    img = np.invert(Image.open(file_to_recognize).convert('L')).ravel()
+    img1 = Image.open(file_to_recognize).convert('L')
+    img1.save("temp.png")
+    img1.show()
+    img2 = np.asarray(Image.open(file_to_recognize).convert('L')).ravel()
 
     # number prediction !
-    prediction = sess.run(tf.argmax(output_layer, 1), feed_dict={X: [img]})
+    prediction = sess.run(tf.argmax(output_layer, 1), feed_dict={X: [img2]})
     print("Prediction for test image: ", np.squeeze(prediction))
-
+    return(prediction)
 
 #numberRecognition()
