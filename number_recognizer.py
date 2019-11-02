@@ -1,8 +1,12 @@
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
+import PIL
+from PIL import ImageTk, Image, ImageDraw
+import numpy as np
 
 
-def numberRecognition():
+def numberRecognition(file_to_recognize):
+    print(file_to_recognize)
     # data load
     mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
@@ -18,7 +22,7 @@ def numberRecognition():
     n_output = 10   # number (digit 0-9)
 
     learning_rate = 1e-4
-    n_iterations = 1200
+    n_iterations = 1000
     batch_size = 128
     dropout = 0.5
 
@@ -90,4 +94,12 @@ def numberRecognition():
     test_accuracy = sess.run(accuracy, feed_dict={X: mnist.test.images, Y: mnist.test.labels, keep_prob: 1.0})
     print("\nAccuracy on test set:", test_accuracy)
 
-numberRecognition()
+    # image load
+    img = np.invert(Image.open(file_to_recognize).convert('L')).ravel()
+
+    # number prediction !
+    prediction = sess.run(tf.argmax(output_layer, 1), feed_dict={X: [img]})
+    print("Prediction for test image: ", np.squeeze(prediction))
+
+
+#numberRecognition()
