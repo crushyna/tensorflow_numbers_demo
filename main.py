@@ -16,7 +16,7 @@ def save():
     image1.save(image_file)
     fileName = image_file
 
-def paint(event):
+def paint(event):ss
     # python_green = "#476042"
     x1, y1 = (event.x - 1), (event.y - 1)
     x2, y2 = (event.x + 1), (event.y + 1)
