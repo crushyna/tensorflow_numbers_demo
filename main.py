@@ -1,24 +1,27 @@
-import PIL
-from PIL import ImageTk, Image, ImageDraw
 from tkinter import *
 from tkinter import messagebox
-from number_recognizer import numberRecognition
-import pandas as pd
-#import numpy as np
+
+import PIL
+from PIL import Image, ImageDraw
+
+# from number_recognizer import numberRecognition
+
+# import numpy as np
 
 width = 150
 height = 150
-center = height//2
+center = height // 2
 white = (255, 255, 255)
-green = (0,128,0)
-
+green = (0, 128, 0)
 
 fileName = "None!"
 
-def resizeImage(image_name, width, height):
+
+def resize_image(image_name, width, height):
     image_in = PIL.Image.open(image_name)
     image_out = image_in.resize((width, height), PIL.Image.BILINEAR)
     image_out.save(image_name)
+
 
 def save():
     width = 28
@@ -27,27 +30,32 @@ def save():
     image1.save(image_file)
     global fileName
     fileName = image_file
-    resizeImage(image_file, width, height)
+    resize_image(image_file, width, height)
     print(fileName)
-    return(fileName)
+    return fileName
 
-def continouosMessageBox(text):
-        top = Toplevel(root)
-        Label(top, text=text).pack()
-        Button(top, text="OK", command=top.destroy).pack(pady=5)
 
-def recognizeNumber():
-    #messagebox.showinfo("Number recognition", "Please wait...")
-    #continouosMessageBox("Calculating, please wait...")
-    recognizedNumber = numberRecognition(fileName)
-    messagebox.showinfo("Number recognition", "Recognized number: {}".format(recognizedNumber))
+def continuous_message_box(text):
+    top = Toplevel(root)
+    Label(top, text=text).pack()
+    Button(top, text="OK", command=top.destroy).pack(pady=5)
+
+
+def recognize_number():
+    # messagebox.showinfo("Number recognition", "Please wait...")
+    # continouosMessageBox("Calculating, please wait...")
+    # recognizedNumber = numberRecognition(fileName)
+    recognized_number = 5
+    messagebox.showinfo("Number recognition", "Recognized number: {}".format(recognized_number))
+
 
 def paint(event):
     # python_green = "#476042"
     x1, y1 = (event.x - 1), (event.y - 1)
     x2, y2 = (event.x + 1), (event.y + 1)
-    cv.create_oval(x1, y1, x2, y2, fill="black",width=15)
-    draw.line([x1, y1, x2, y2],fill="black",width=15)
+    cv.create_oval(x1, y1, x2, y2, fill="black", width=12)
+    draw.line([x1, y1, x2, y2], fill="black", width=12)
+
 
 root = Tk()
 
@@ -72,8 +80,8 @@ cv.bind("<B1-Motion>", paint)
 # PIL image can be saved as .png .jpg .gif or .bmp file (among others)
 # filename = "my_drawing.png"
 # image1.save(filename)
-button1=Button(text="Save",command=save)
-button2=Button(text="Recognize", command=recognizeNumber)
+button1 = Button(text="Save", command=save)
+button2 = Button(text="Recognize", command=recognize_number)
 button1.pack(side=LEFT)
 button2.pack(side=RIGHT)
 

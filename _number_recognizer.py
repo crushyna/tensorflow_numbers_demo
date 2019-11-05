@@ -1,11 +1,10 @@
-import tensorflow as tf
-from tensorflow.examples.tutorials.mnist import input_data
-import PIL
-from PIL import ImageTk, Image, ImageDraw
 import numpy as np
+import tensorflow as tf
+from PIL import Image
+from tensorflow.examples.tutorials.mnist import input_data
 
 
-def numberRecognition(file_to_recognize):
+def number_recognition(file_to_recognize):
     print(file_to_recognize)
     # data load
     mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
