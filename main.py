@@ -1,10 +1,10 @@
 from tkinter import *
 from tkinter import messagebox
-
 import PIL
 from PIL import Image, ImageDraw
-
-from number_recognizer import numberRecognition
+import number_recognizer_2
+from number_recognizer2 import predict_number
+from number_recognizer2 import train_neural_network
 
 # import numpy as np
 
@@ -41,12 +41,16 @@ def continuous_message_box(text):
     Button(top, text="OK", command=top.destroy).pack(pady=5)
 
 
+def train_model():
+    train_neural_network()
+
+
 def recognize_number():
     # messagebox.showinfo("Number recognition", "Please wait...")
     # continouosMessageBox("Calculating, please wait...")
     # recognizedNumber = numberRecognition(fileName)
-    recognized_number = 5
-    messagebox.showinfo("Number recognition", "Recognized number: {}".format(recognized_number))
+    recognizedNumber = predict_number(fileName)
+    messagebox.showinfo("Number recognition", "Recognized number: {}".format(recognizedNumber))
 
 
 def paint(event):
@@ -81,8 +85,10 @@ cv.bind("<B1-Motion>", paint)
 # filename = "my_drawing.png"
 # image1.save(filename)
 button1 = Button(text="Save", command=save)
-button2 = Button(text="Recognize", command=recognize_number)
+button2 = Button(text="Train", command=train_model)
+button3 = Button(text="Recognize", command=recognize_number)
 button1.pack(side=LEFT)
+button2.pack(side=RIGHT)
 button2.pack(side=RIGHT)
 
 root.mainloop()

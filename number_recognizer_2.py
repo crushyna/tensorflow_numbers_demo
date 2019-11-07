@@ -9,9 +9,11 @@ from tensorflow.keras.layers import Dense, Dropout, Activation
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
 from keras.utils.np_utils import to_categorical
+from keras.models import load_model
 
 
 def train_neural_network():
+
     # get the MNIST dataset
     # split the dataset into training and testing datasets
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -32,6 +34,7 @@ def train_neural_network():
         plt.show()
     '''
 
+    '''
     img3 = imread('image.png')
     print(img3.shape)
 
@@ -42,6 +45,7 @@ def train_neural_network():
     img5 = np.invert(Image.open("image.png").convert('L')).ravel()
     img5 = img5.reshape(-1, 784)
     print(img5.shape)
+    '''
 
     # each matrix in the training/test set needs to be “unrolled”
     x_train = x_train.reshape(-1, 784)
@@ -71,6 +75,7 @@ def train_neural_network():
 
     model.save("trainedMNISTModel.h5")
 
+
 '''
 prediction = model.predict(img4)
 plt.imshow(img4)
@@ -85,13 +90,35 @@ img1.save("temp.png")
 img1.show()
 img2 = np.asarray(Image.open('image.png').convert('L'))
 '''
+
+
 # img3 = imread('image.png')
 
 def predict_number(image_of_number):
-    prediction = model.predict(img4)
-    plt.imshow(img4)
-    print("Prediction for test image 1:", np.squeeze(prediction))
 
-    prediction = model.predict(img5)
+    img3 = imread(image_of_number)
+    print(img3.shape)
+
+    img4 = np.asarray(Image.open(image_of_number).convert('L')).ravel()
+    img4 = img4.reshape(-1, 784)
+    print(img4.shape)
+
+    img5 = np.invert(Image.open(image_of_number).convert('L')).ravel()
+    img5 = img5.reshape(-1, 784)
+    print(img5.shape)
+
+    # load trained model
+    model = load_model("trainedMNISTModel.h5")
+
+    # actual prediction
+    prediction1 = model.predict(img4)
+    plt.imshow(img4)
+    print("Prediction for test image 1:", np.squeeze(prediction1))
+
+    prediction2 = model.predict(img5)
     plt.imshow(img5)
-    print("Prediction for test image 2:", np.squeeze(prediction))
+    print("Prediction for test image 2:", np.squeeze(prediction2))
+
+    return prediction2
+
+
