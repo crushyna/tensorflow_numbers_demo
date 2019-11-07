@@ -10,4 +10,4 @@ print(y_train[image_index])     # should be 8
 plt.imshow(x_train[image_index], cmap='Greys')
 plt.show()
 
-# print(x_train.shape)
+print(x_train.shape)
