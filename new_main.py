@@ -1,8 +1,10 @@
 from tkinter import *
-from tkinter import ttk, colorchooser, filedialog
+from tkinter import ttk, messagebox
 import PIL
-from PIL import ImageGrab
+from PIL import ImageGrab, Image
+from time import sleep
 
+filename = 'None!'
 
 class Main:
     def __init__(self, master):
@@ -11,8 +13,8 @@ class Main:
         self.color_bg = 'white'
         self.old_x = None
         self.old_y = None
-        self.penwidth = 15
-        self.drawWidgets()
+        self.penwidth = 30
+        self.draw_widgets()
         self.c.bind('<B1-Motion>', self.paint)
         self.c.bind('<ButtonRelease-1>', self.reset)
 
@@ -30,19 +32,50 @@ class Main:
 
     def changewidth(self, e):
         self.penwidth = e
+        '''
+        image_in = PIL.Image.open(filename)
+        image_out = image_in.resize((width, height), PIL.Image.ANTIALIAS)
+        image_out.save(filename)
+        '''
 
     def save(self):
-        # file = filedialog.asksaveasfilename(filetypes=[('Portable Network Graphics', '*.png')])
-        # if file:
+        sleep(1)
+        # file specs
+        save_width = 28
+        save_height = 28
+        filetitle = 'image.png'
+        global filename
+        filename = filetitle
+
+        # save file
         x = self.master.winfo_rootx() + self.c.winfo_x()
         y = self.master.winfo_rooty() + self.c.winfo_y()
         x1 = x + self.c.winfo_width()
         y1 = y + self.c.winfo_height()
+        PIL.ImageGrab.grab().crop((x, y, x1, y1)).save(filetitle)
 
-        PIL.ImageGrab.grab().crop((x, y, x1, y1)).save('image' + '.png')
+        # resize image
+        image_in = PIL.Image.open(filetitle)
+        image_out = image_in.resize((save_width, save_height), PIL.Image.ANTIALIAS)
+        image_out.save(filetitle)
+        return filename
 
     def clear(self):
         self.c.delete(ALL)
+
+    def recognize_number(self):
+        self.save()
+        from number_recognizer_2 import predict_number
+        # messagebox.showinfo("Number recognition", "Please wait...")
+        # continouosMessageBox("Calculating, please wait...")
+        # recognizedNumber = numberRecognition(fileName)
+        recognized_number = predict_number(filename)
+        messagebox.showinfo("Number recognition", "Recognized number: {}".format(recognized_number))
+        return recognized_number
+
+    def train_model(self):
+        from number_recognizer_2 import train_neural_network
+        train_neural_network()
     '''
     def change_fg(self):
         self.color_fg = colorchooser.askcolor(color=self.color_fg)[1]
@@ -52,31 +85,27 @@ class Main:
         self.c['bg'] = self.color_bg
     '''
 
-    def drawWidgets(self):
+    def draw_widgets(self):
         self.controls = Frame(self.master, padx=5, pady=5)
-        Label(self.controls, text='Pen Width: ', font=('', 15)).grid(row=0, column=0)
-        self.slider = ttk.Scale(self.controls, from_=5, to=100, command=self.changewidth, orient=HORIZONTAL)
+        Label(self.controls, text='Pen Width: ', font=('', 10)).grid(row=0, column=0)
+        self.slider = ttk.Scale(self.controls, from_=15, to=35, command=self.changewidth, orient=HORIZONTAL)
         self.slider.set(self.penwidth)
         self.slider.grid(row=0, column=1, ipadx=30)
         self.controls.pack()
 
-        self.c = Canvas(self.master, width=500, height=400, bg=self.color_bg, )
+        self.c = Canvas(self.master, width=280, height=280, bg=self.color_bg, )
         self.c.pack(fill=BOTH, expand=True)
 
         menu = Menu(self.master)
         self.master.config(menu=menu)
         filemenu = Menu(menu)
-        menu.add_cascade(label='File..', menu=filemenu)
-        filemenu.add_command(label='Export..', command=self.save)
-        colormenu = Menu(menu)
-        # menu.add_cascade(label='Colors', menu=colormenu)
-        # colormenu.add_command(label='Brush Color', command=self.change_fg)
-        # colormenu.add_command(label='Background Color', command=self.change_bg)
+        menu.add_cascade(label='File', menu=filemenu)
+        filemenu.add_command(label='Save', command=self.save)
         optionmenu = Menu(menu)
         menu.add_cascade(label='Options', menu=optionmenu)
-        optionmenu.add_command(label='Clear Canvas', command=self.clear)
-        # optionmenu.add_command(label='Recognize digit', command=)
-        # optionmenu.add_command(label='Train neural network', command=)
+        optionmenu.add_command(label='Clear canvas', command=self.clear)
+        optionmenu.add_command(label='Recognize digit', command=self.recognize_number)
+        optionmenu.add_command(label='Train neural network', command=self.train_model)
         optionmenu.add_command(label='Exit', command=self.master.destroy)
 
 
