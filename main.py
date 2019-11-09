@@ -14,7 +14,7 @@ class Main:
         self.color_bg = 'white'
         self.old_x = None
         self.old_y = None
-        self.penwidth = 30
+        self.penwidth = 40
         self.draw_widgets()
         self.c.bind('<B1-Motion>', self.paint)
         self.c.bind('<ButtonRelease-1>', self.reset)
@@ -67,8 +67,10 @@ class Main:
         return recognized_number
 
     def train_model(self):
+        messagebox.showinfo("Training", "This might take few minutes, please wait.")
         from number_recognizer_2 import train_neural_network
         train_neural_network()
+        messagebox.showinfo("Training", "Training completed!")
 
     '''
     def change_fg(self):
@@ -82,7 +84,7 @@ class Main:
     def draw_widgets(self):
         self.controls = Frame(self.master, padx=5, pady=5)
         Label(self.controls, text='Pen Width: ', font=('', 10)).grid(row=0, column=0)
-        self.slider = ttk.Scale(self.controls, from_=15, to=35, command=self.changewidth, orient=HORIZONTAL)
+        self.slider = ttk.Scale(self.controls, from_=15, to=50, command=self.changewidth, orient=HORIZONTAL)
         self.slider.set(self.penwidth)
         self.slider.grid(row=0, column=1, ipadx=30)
         self.controls.pack()

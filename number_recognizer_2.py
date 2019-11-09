@@ -37,20 +37,37 @@ def train_neural_network():
     y_test = to_categorical(y_test, 10)
 
     model = Sequential()
-    model.add(Dense(25, input_dim=28 * 28, activation='relu'))
+    model.add(Dense(784, input_dim=28 * 28, activation='relu'))
+    model.add(Dropout(0.1, seed=3))
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.1, seed=3))
     model.add(Dense(256, activation='relu'))
-    model.add(Dense(300, activation='relu'))
+    model.add(Dropout(0.1, seed=3))
     model.add(Dense(10, activation='softmax'))
+
+    '''
+    model = Sequential()
+    model.add(Dense(512, input_shape=(784,)))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.2))
+
+    model.add(Dense(512))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.2))
+
+    model.add(Dense(10))
+    model.add(Activation('softmax'))
+    '''
 
     # model.compile configures the learning process
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     # epochs is the number of passes through the training data
     # batch size is the number of samples that are sent through the network
-    model.fit(x_train, y_train, epochs=20, shuffle=True, verbose=2, batch_size=128)
+    model.fit(x_train, y_train, epochs=3, shuffle=True, verbose=2, batch_size=128)
 
     # run neural network on test data
-    test_error_rate = model.evaluate(x_test, y_test, verbose=0)
+    test_error_rate = model.evaluate(x_test, y_test, verbose=2)
     print(model.metrics_names)
     print(test_error_rate)
 
@@ -77,11 +94,11 @@ def predict_number(image_of_number):
     prediction1 = model.predict(img4)
     result_index1 = np.where((np.squeeze(prediction1)) == 1)
     plt.imshow(img4)
-    print("Prediction for test image 2:", result_index1[0])
+    print("Prediction for asarray image:", result_index1[0])
 
     prediction2 = model.predict(img5)
     plt.imshow(img5)
     result_index2 = np.where((np.squeeze(prediction2)) == 1)
-    print("Prediction for test image 2:", result_index2[0])
+    print("Prediction for invert image:", result_index2[0])
 
     return result_index2[0]
