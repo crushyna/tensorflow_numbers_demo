@@ -1,8 +1,11 @@
+from time import sleep
 from tkinter import *
 from tkinter import ttk, messagebox
+
 import PIL
 from PIL import ImageGrab, Image
-from time import sleep
+
+from number_recognizer_2 import NeuralNetwork
 
 filename = 'None!'
 
@@ -61,25 +64,16 @@ class Main:
 
     def recognize_number(self):
         self.save()
-        from number_recognizer_2 import predict_number
-        recognized_number = predict_number(filename)
+        #from number_recognizer_2 import predict_number
+        recognized_number = NeuralNetwork.predict_number(filename)
         messagebox.showinfo("Number recognition", "Recognized number: {}".format(recognized_number))
         return recognized_number
 
     def train_model(self):
         messagebox.showinfo("Training", "This might take few minutes, please wait.")
-        from number_recognizer_2 import train_neural_network
-        train_neural_network()
+        #from number_recognizer_2 import train_neural_network
+        NeuralNetwork.train_neural_network()
         messagebox.showinfo("Training", "Training completed!")
-
-    '''
-    def change_fg(self):
-        self.color_fg = colorchooser.askcolor(color=self.color_fg)[1]
-
-    def change_bg(self):
-        self.color_bg = colorchooser.askcolor(color=self.color_bg)[1]
-        self.c['bg'] = self.color_bg
-    '''
 
     def draw_widgets(self):
         self.controls = Frame(self.master, padx=5, pady=5)
@@ -88,10 +82,8 @@ class Main:
         self.slider.set(self.penwidth)
         self.slider.grid(row=0, column=1, ipadx=30)
         self.controls.pack()
-
         self.c = Canvas(self.master, width=280, height=280, bg=self.color_bg, )
         self.c.pack(fill=BOTH, expand=True)
-
         menu = Menu(self.master)
         self.master.config(menu=menu)
         filemenu = Menu(menu)

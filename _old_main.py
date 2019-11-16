@@ -1,8 +1,9 @@
+from time import sleep
 from tkinter import *
 from tkinter import ttk, messagebox
+
 import PIL
 from PIL import ImageGrab, Image
-from time import sleep
 
 filename = 'None!'
 
