@@ -1,10 +1,8 @@
 from time import sleep
 from tkinter import *
 from tkinter import ttk, messagebox
-
 import PIL
 from PIL import ImageGrab, Image
-
 from number_recognizer_2 import NeuralNetwork
 
 filename = 'None!'
@@ -64,16 +62,23 @@ class Main:
 
     def recognize_number(self):
         self.save()
-        #from number_recognizer_2 import predict_number
         recognized_number = NeuralNetwork.predict_number(filename)
-        messagebox.showinfo("Number recognition", "Recognized number: {}".format(recognized_number))
-        return recognized_number
+        result_answer1 = messagebox.askyesno("Number recognition", f"Recognized number: {recognized_number}. \n"
+                                                                   f"Is this number correct?")
+        if result_answer1:
+            return recognized_number
+        else:
+            # TODO: this needs some kind of GUI implemented
+            proper_number = int(input("Enter proper number: "))
+            NeuralNetwork.merge_images(proper_number, 'image.png')
 
     def train_model(self):
         messagebox.showinfo("Training", "This might take few minutes, please wait.")
-        #from number_recognizer_2 import train_neural_network
         NeuralNetwork.train_neural_network()
         messagebox.showinfo("Training", "Training completed!")
+
+    def close_window_and_retrain(self):
+        self.win.quit()
 
     def draw_widgets(self):
         self.controls = Frame(self.master, padx=5, pady=5)
