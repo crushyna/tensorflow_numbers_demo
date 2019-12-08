@@ -71,6 +71,7 @@ class Main:
             # TODO: this needs some kind of GUI implemented
             proper_number = int(input("Enter proper number: "))
             NeuralNetwork.merge_images(proper_number, 'image.png')
+            print('OK!')
 
     def train_model(self):
         messagebox.showinfo("Training", "This might take few minutes, please wait.")
