@@ -1,6 +1,6 @@
 from time import sleep
 from tkinter import *
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 import PIL
 from PIL import ImageGrab, Image
 from number_recognizer_2 import NeuralNetwork
@@ -10,6 +10,7 @@ filename = 'None!'
 
 class Main:
     def __init__(self, master):
+        self.counter = 0
         self.master = master
         self.color_fg = 'black'
         self.color_bg = 'white'
@@ -68,9 +69,9 @@ class Main:
         if result_answer1:
             return recognized_number
         else:
-            # TODO: this needs some kind of GUI implemented
-            proper_number = int(input("Enter proper number: "))
-            NeuralNetwork.merge_images(proper_number, 'image.png')
+            inp = InputBox(text="Enter proper number and press enter: ")
+            print(inp.get)
+            NeuralNetwork.merge_images(inp.get, 'image.png')
             print('OK!')
 
     def train_model(self):
@@ -101,6 +102,26 @@ class Main:
         optionmenu.add_command(label='Recognize digit', command=self.recognize_number)
         optionmenu.add_command(label='Train neural network', command=self.train_model)
         optionmenu.add_command(label='Exit', command=self.master.destroy)
+
+
+class InputBox:
+    def __init__(self, text=""):
+        self.root1 = Tk()
+        self.get = ""
+        self.root1.geometry("300x80")
+        self.root1.title("Number?")
+        self.label_file_name = Label(self.root1, text=text)
+        self.label_file_name.pack()
+        self.entry = Entry(self.root1)
+        self.entry.pack()
+        self.entry.focus()
+        self.entry.bind("<Return>", lambda x: self.getinput(self.entry.get()))
+        self.root1.mainloop()
+
+    def getinput(self, value):
+        self.get = value
+        self.root1.destroy()
+        self.root1.quit()
 
 
 if __name__ == '__main__':

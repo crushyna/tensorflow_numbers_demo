@@ -1,6 +1,7 @@
 import PIL.Image as Image
 import matplotlib.pyplot as plt
 import numpy as np
+from keras.utils import np_utils
 from tensorflow.keras.layers import Flatten, Conv2D, MaxPooling2D
 from keras.utils.np_utils import to_categorical
 from tensorflow.keras.datasets import mnist
@@ -11,20 +12,25 @@ from tensorflow.keras.utils import to_categorical
 
 class NeuralNetwork:
 
+    (X_train, y_train), (X_test, y_test) = mnist.load_data(path='MNIST_data')
+
     @staticmethod
     def train_neural_network():
         # get the MNIST dataset
         # split the dataset into training and testing datasets
-        (X_train, y_train), (X_test, y_test) = mnist.load_data(path='MNIST_data')
+        # (X_train, y_train), (X_test, y_test) = mnist.load_data(path='MNIST_data')
 
         # TODO: shape isn't changing after adding new image to dataset. Is merging even working?
-        print(X_train.shape)
-        print(y_test.shape)
+        print(NeuralNetwork.X_train.shape)
+        print(NeuralNetwork.X_test.shape)
+        print(NeuralNetwork.y_train.shape)
+        print(NeuralNetwork.y_test.shape)
+
 
         # flatten 28*28 images to a 784 vector for each image
-        num_pixels = X_train.shape[1] * X_train.shape[2]
-        X_train = X_train.reshape((X_train.shape[0], num_pixels)).astype('float32')
-        X_test = X_test.reshape((X_test.shape[0], num_pixels)).astype('float32')
+        num_pixels = NeuralNetwork.X_train.shape[1] * NeuralNetwork.X_train.shape[2]
+        X_train = NeuralNetwork.X_train.reshape((NeuralNetwork.X_train.shape[0], num_pixels)).astype('float32')
+        X_test = NeuralNetwork.X_test.reshape((NeuralNetwork.X_test.shape[0], num_pixels)).astype('float32')
 
         # normalize inputs from 0-255 to 0-1
         X_train = X_train / 255
@@ -35,8 +41,8 @@ class NeuralNetwork:
         X_test = X_test.reshape(-1, 784)
 
         # convert train and test outputs to one hot encoding
-        y_train = to_categorical(y_train, 10)
-        y_test = to_categorical(y_test, 10)
+        y_train = to_categorical(NeuralNetwork.y_train, 10)
+        y_test = to_categorical(NeuralNetwork.y_test, 10)
 
         model = Sequential()
         model.add(Dense(784, input_dim=28 * 28, activation='relu'))
@@ -45,7 +51,7 @@ class NeuralNetwork:
         model.add(Dense(1568, activation='relu'))
         # model.add(Dropout(0.1, seed=3))
         model.add(Dense(128, activation='relu'))
-        model.add(Dropout(0.5))
+        model.add(Dropout(0.2))
         model.add(Dense(10, activation='softmax'))
 
         # model.compile configures the learning process
@@ -53,7 +59,7 @@ class NeuralNetwork:
 
         # epochs is the number of passes through the training data
         # batch size is the number of samples that are sent through the network
-        model.fit(X_train, y_train, epochs=5, shuffle=True, verbose=2, batch_size=200)
+        model.fit(X_train, y_train, epochs=1, shuffle=True, verbose=2, batch_size=2000)
 
         # run neural network on test data
         test_error_rate = model.evaluate(X_test, y_test, verbose=2)
@@ -92,20 +98,18 @@ class NeuralNetwork:
 
     @staticmethod
     def load_images_to_data(image_label: int, image_file: str, features_data, label_data):
-        (X_train, y_train), (X_test, y_test) = mnist.load_data()
         img = Image.open(image_file).convert("L")
-
         img = img.resize((28, 28))
         im2arr = np.array(img)
         im2arr = im2arr / 255
         im2arr = im2arr.reshape((1, 28, 28))
-
         features_data = np.append(features_data, im2arr, axis=0)
         label_data = np.append(label_data, [image_label], axis=0)
+
         return features_data, label_data
 
     @staticmethod
     def merge_images(label: int, image_file: str):
-        (X_train, y_train), (X_test, y_test) = mnist.load_data()
-        NeuralNetwork.load_images_to_data(label, image_file, X_train, y_train)
-        NeuralNetwork.load_images_to_data(label, image_file, X_test, y_test)
+        # (X_train, y_train), (X_test, y_test) = mnist.load_data(path='MNIST_data')
+        NeuralNetwork.load_images_to_data(label, image_file, NeuralNetwork.X_train, NeuralNetwork.y_train)
+        NeuralNetwork.load_images_to_data(label, image_file, NeuralNetwork.X_test, NeuralNetwork.y_test)

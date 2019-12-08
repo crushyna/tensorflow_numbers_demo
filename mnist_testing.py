@@ -6,26 +6,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 import shutil
 
-MNIST_folder = 'MNIST_data'
-MNIST_raw = 'MNIST_raw'
 
-source_train_images = f'{MNIST_folder}/train-images-idx3-ubyte.gz'
-source_train_labels = f'{MNIST_folder}/train-labels-idx1-ubyte.gz'
-dest_train_images = f'{MNIST_raw}/train-images-idx3-ubyte'
-dest_train_labels = f'{MNIST_raw}/train-labels-idx1-ubyte'
+# load data
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
 
+# Reshaping to format which CNN expects (batch, height, width, channels)
+X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1).astype('float32')
+X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1).astype('float32')
 
-def gunzip_shutil(source_filepath, dest_filepath, block_size=65536):
-    with gzip.open(source_filepath, 'rb') as s_file, \
-            open(dest_filepath, 'wb') as d_file:
-        shutil.copyfileobj(s_file, d_file, block_size)
-
-
-gunzip_shutil(source_train_images, dest_train_images)
-gunzip_shutil(source_train_labels, dest_train_labels)
-
-mndata = MNIST(MNIST_raw)
-train_images, train_labels = mndata.load_training()
-
-index = random.randrange(2, len(train_images))  # choose an index ;-)
-print(mndata.display(train_images[index]))
+# To load images to features and labels
+def load_images_to_data(image_label, image_directory, features_data, label_data):
+    list_of_files = os.listdir(image_directory)
+    for file in list_of_files:
+        image_file_name = os.path.join(image_directory, file)
+        if ".png" in image_file_name:
+            img = Image.open(image_file_name).convert("L")
+            img = np.resize(img, (28,28,1))
+            im2arr = np.array(img)
+            im2arr = im2arr.reshape(1,28,28,1)
+            features_data = np.append(features_data, im2arr, axis=0)
+            label_data = np.append(label_data, [image_label], axis=0)
+    return features_data, label_data
