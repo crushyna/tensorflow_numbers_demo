@@ -3,7 +3,8 @@ from tkinter import *
 from tkinter import ttk, messagebox, simpledialog
 import PIL
 from PIL import ImageGrab, Image
-from number_recognizer_2 import NeuralNetwork
+# from number_recognizer_2 import NeuralNetwork
+from number_recognizer_3 import NeuralNetwork
 
 filename = 'None!'
 
@@ -129,3 +130,4 @@ if __name__ == '__main__':
     Main(root)
     root.title('DrawingApp')
     root.mainloop()
+    NeuralNetwork.load_dataset()
