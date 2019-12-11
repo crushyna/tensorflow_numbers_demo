@@ -64,7 +64,7 @@ class Main:
 
     def recognize_number(self):
         self.save()
-        recognized_number = NeuralNetwork.predict_number(filename)
+        recognized_number = network1.predict_number(filename)
         result_answer1 = messagebox.askyesno("Number recognition", f"Recognized number: {recognized_number}. \n"
                                                                    f"Is this number correct?")
         if result_answer1:
@@ -72,12 +72,12 @@ class Main:
         else:
             inp = InputBox(text="Enter proper number and press enter: ")
             print(inp.get)
-            NeuralNetwork.merge_images(inp.get, 'image.png')
+            network1.merge_images(inp.get, 'image.png')
             print('OK!')
 
     def train_model(self):
         messagebox.showinfo("Training", "This might take few minutes, please wait.")
-        NeuralNetwork.train_neural_network()
+        network1.train_neural_network()
         messagebox.showinfo("Training", "Training completed!")
 
     def close_window_and_retrain(self):
@@ -126,8 +126,8 @@ class InputBox:
 
 
 if __name__ == '__main__':
+    network1 = NeuralNetwork()
     root = Tk()
     Main(root)
     root.title('DrawingApp')
     root.mainloop()
-    NeuralNetwork.load_dataset()
