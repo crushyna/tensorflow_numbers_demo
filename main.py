@@ -73,12 +73,20 @@ class Main:
             inp = InputBox(text="Enter proper number and press enter: ")
             print(inp.get)
             network1.merge_images(inp.get, 'image.png')
-            print('OK!')
+            print('Image appended to dataset.')
+            result_answer2 = messagebox.askyesno("Number recognition",
+                                                 "Would you like to re-train model with new item?")
+
+            if result_answer2:
+                network1.train_neural_network()
 
     def train_model(self):
         messagebox.showinfo("Training", "This might take few minutes, please wait.")
-        network1.train_neural_network()
-        messagebox.showinfo("Training", "Training completed!")
+        result = network1.train_neural_network()
+        if result == 1:
+            messagebox.showinfo("Training", "Training completed!")
+        else:
+            print("Something is no yes")
 
     def close_window_and_retrain(self):
         self.win.quit()
