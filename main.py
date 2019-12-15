@@ -1,3 +1,4 @@
+from os import listdir
 from time import sleep
 from tkinter import *
 from tkinter import ttk, messagebox, simpledialog
@@ -17,7 +18,7 @@ class Main:
         self.color_bg = 'white'
         self.old_x = None
         self.old_y = None
-        self.penwidth = 40
+        self.penwidth = 32.5
         self.draw_widgets()
         self.c.bind('<B1-Motion>', self.paint)
         self.c.bind('<ButtonRelease-1>', self.reset)
@@ -102,10 +103,10 @@ class Main:
         self.c.pack(fill=BOTH, expand=True)
         menu = Menu(self.master)
         self.master.config(menu=menu)
-        filemenu = Menu(menu)
+        filemenu = Menu(menu, tearoff=0)
         menu.add_cascade(label='File', menu=filemenu)
         filemenu.add_command(label='Save', command=self.save)
-        optionmenu = Menu(menu)
+        optionmenu = Menu(menu, tearoff=0)
         menu.add_cascade(label='Options', menu=optionmenu)
         optionmenu.add_command(label='Clear canvas', command=self.clear)
         optionmenu.add_command(label='Recognize digit', command=self.recognize_number)
@@ -135,6 +136,16 @@ class InputBox:
 
 if __name__ == '__main__':
     network1 = NeuralNetwork()
+    files_list = listdir('working_dataset')
+    if files_list.__len__() == 4:
+        print("Loading working dataset...")
+        network1.dataset = network1.load_working_dataset()
+        print("Ok!")
+    else:
+        print("Loading clean dataset...")
+        network1.dataset = network1.load_clean_dataset()
+        print("Ok!")
+
     root = Tk()
     Main(root)
     root.title('DrawingApp')
