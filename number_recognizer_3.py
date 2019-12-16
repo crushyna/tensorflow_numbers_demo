@@ -47,17 +47,17 @@ class NeuralNetwork:
         return self.X_train, self.y_train, self.X_test, self.y_test
 
     def save_working_dataset(self):
-        self.X_train.tofile("working_dataset/X_train.npy", sep="")
-        self.y_train.tofile("working_dataset/y_train.npy", sep="")
-        self.X_test.tofile("working_dataset/X_test.npy", sep="")
-        self.y_test.tofile("working_dataset/y_test.npy", sep="")
+        self.X_train.dump("working_dataset/X_train.npy")
+        self.y_train.dump("working_dataset/y_train.npy")
+        self.X_test.dump("working_dataset/X_test.npy")
+        self.y_test.dump("working_dataset/y_test.npy")
         print("Working dataset saved!")
 
     def load_working_dataset(self):
-        self.X_train = np.fromfile("working_dataset/X_train.npy", count=-1)
-        self.y_train = np.fromfile("working_dataset/y_train.npy", count=-1)
-        self.X_test = np.fromfile("working_dataset/X_test.npy", count=-1)
-        self.y_test = np.fromfile("working_dataset/y_test.npy", count=-1)
+        self.X_train = np.load("working_dataset/X_train.npy", allow_pickle=True)
+        self.y_train = np.load("working_dataset/y_train.npy", allow_pickle=True)
+        self.X_test = np.load("working_dataset/X_test.npy", allow_pickle=True)
+        self.y_test = np.load("working_dataset/y_test.npy", allow_pickle=True)
         print("Working dataset loaded!")
 
         return self.X_train, self.y_train, self.X_test, self.y_test
@@ -81,10 +81,10 @@ class NeuralNetwork:
 
         # create model
         model = Sequential()
-        model.add(Conv2D(128, (10, 10), input_shape=(self.X_train.shape[1],
-                                                     self.X_train.shape[2], 1), activation='relu'))
+        model.add(Conv2D(32, (5, 5), input_shape=(self.X_train.shape[1],
+                                                  self.X_train.shape[2], 1), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Conv2D(64, (5, 5), activation='relu'))
+        model.add(Conv2D(16, (3, 3), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.5))
         model.add(Flatten())
@@ -97,12 +97,13 @@ class NeuralNetwork:
 
         # Fit the model
         model.fit(self.X_train, NEW_y_train,
-                  validation_data=(self.X_test, NEW_y_test), epochs=5, batch_size=500)
+                  validation_data=(self.X_test, NEW_y_test), epochs=1, batch_size=300)
 
         # Save the model
         print("Saving model...")
         model.save('trainedMNISTModel.h5')
         print("Saved!")
+        self.save_working_dataset()
         time.sleep(1)
 
         return 1
@@ -147,4 +148,16 @@ class NeuralNetwork:
 
         return self.X_train, self.y_train, self.X_test, self.y_test
 
+
+# visualize one number with pixel values
+def visualize_input(img, ax):
+    ax.imshow(img, cmap='gray')
+    width, height = img.shape
+    thresh = img.max() / 2.5
+    for x in range(width):
+        for y in range(height):
+            ax.annotate(str(round(img[x][y], 2)), xy=(y, x),
+                        horizontalalignment='center',
+                        verticalalignment='center',
+                        color='white' if img[x][y] < thresh else 'black')
     # make it happen!
