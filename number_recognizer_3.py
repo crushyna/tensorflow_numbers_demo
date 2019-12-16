@@ -42,6 +42,7 @@ class NeuralNetwork:
         self.y_train = y_train
         self.X_test = X_test
         self.y_test = y_test
+        self.reshape()
         print("Clean dataset loaded!")
 
         return self.X_train, self.y_train, self.X_test, self.y_test
@@ -58,6 +59,7 @@ class NeuralNetwork:
         self.y_train = np.load("working_dataset/y_train.npy", allow_pickle=True)
         self.X_test = np.load("working_dataset/X_test.npy", allow_pickle=True)
         self.y_test = np.load("working_dataset/y_test.npy", allow_pickle=True)
+        self.reshape()
         print("Working dataset loaded!")
 
         return self.X_train, self.y_train, self.X_test, self.y_test
@@ -84,7 +86,7 @@ class NeuralNetwork:
         model.add(Conv2D(32, (5, 5), input_shape=(self.X_train.shape[1],
                                                   self.X_train.shape[2], 1), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Conv2D(16, (3, 3), activation='relu'))
+        model.add(Conv2D(32, (3, 3), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.5))
         model.add(Flatten())
@@ -97,7 +99,7 @@ class NeuralNetwork:
 
         # Fit the model
         model.fit(self.X_train, NEW_y_train,
-                  validation_data=(self.X_test, NEW_y_test), epochs=1, batch_size=300)
+                  validation_data=(self.X_test, NEW_y_test), epochs=3, batch_size=200)
 
         # Save the model
         print("Saving model...")
@@ -127,10 +129,10 @@ class NeuralNetwork:
 
     def load_images_to_data(self, image_label: str, image_file: str):
         img = Image.open(image_file).convert("L")
-        img = img.resize((28, 28))
+        # img = img.resize(img, 28, 28, 1)
         im2arr = np.array(img)
         im2arr = im2arr / 255
-        im2arr = im2arr.reshape(1, 28, 28, 1)
+        im2arr = im2arr.reshape((1, 28, 28, 1))
 
         self.X_train = np.append(self.X_train, im2arr, axis=0)
         self.X_test = np.append(self.X_test, im2arr, axis=0)
@@ -156,7 +158,7 @@ def visualize_input(img, ax):
     thresh = img.max() / 2.5
     for x in range(width):
         for y in range(height):
-            ax.annotate(str(round(img[x][y], 2)), xy=(y, x),
+            ax.annotate(str(round(img[x][y][1], 2)), xy=(y, x),
                         horizontalalignment='center',
                         verticalalignment='center',
                         color='white' if img[x][y] < thresh else 'black')
