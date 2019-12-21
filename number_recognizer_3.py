@@ -19,6 +19,7 @@ class NeuralNetwork:
 
     def __init__(self):
         self.dataset = object
+
         # 0:(0:X_train, 1:y_train), 1:(0:X_test, 1:y_test) = mnist.load_data(path='MNIST_data')
         self.X_train = np.ndarray
         self.y_train = np.ndarray
@@ -37,7 +38,6 @@ class NeuralNetwork:
 
     def load_clean_dataset(self):
         (X_train, y_train), (X_test, y_test) = mnist.load_data(path='MNIST_data')
-
         self.X_train = X_train
         self.y_train = y_train
         self.X_test = X_test
@@ -88,10 +88,10 @@ class NeuralNetwork:
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Conv2D(32, (3, 3), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Dropout(0.5))
+        # model.add(Dropout(0.3))
         model.add(Flatten())
-        model.add(Dense(128, activation='relu'))
-        model.add(Dropout(0.5))
+        model.add(Dense(200, activation='relu'))
+        model.add(Dropout(0.4))
         model.add(Dense(number_of_classes, activation='softmax'))
 
         # Compile model
@@ -99,13 +99,13 @@ class NeuralNetwork:
 
         # Fit the model
         model.fit(self.X_train, NEW_y_train,
-                  validation_data=(self.X_test, NEW_y_test), epochs=3, batch_size=200)
+                  validation_data=(self.X_test, NEW_y_test), epochs=2, batch_size=1000)
 
         # Save the model
         print("Saving model...")
         model.save('trainedMNISTModel.h5')
         print("Saved!")
-        self.save_working_dataset()
+        # self.save_working_dataset()
         time.sleep(1)
 
         return 1
