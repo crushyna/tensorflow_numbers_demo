@@ -1,6 +1,7 @@
 from os import listdir
 
 import PIL.Image as Image
+from PIL import ImageOps
 import time
 import numpy as np
 import tensorflow as tf
@@ -65,7 +66,7 @@ class NeuralNetwork:
         return self.X_train, self.y_train, self.X_test, self.y_test
 
     def train_neural_network(self):
-        self.reshape()
+        # self.reshape()
 
         print(self.X_train.shape)
         print(self.X_test.shape)
@@ -86,12 +87,12 @@ class NeuralNetwork:
         model.add(Conv2D(32, (5, 5), input_shape=(self.X_train.shape[1],
                                                   self.X_train.shape[2], 1), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Conv2D(32, (3, 3), activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        # model.add(Dropout(0.3))
+        # model.add(Conv2D(32, (3, 3), activation='relu'))
+        # model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Dropout(0.2))
         model.add(Flatten())
-        model.add(Dense(200, activation='relu'))
-        model.add(Dropout(0.4))
+        model.add(Dense(128, activation='relu'))
+        # model.add(Dropout(0.4))
         model.add(Dense(number_of_classes, activation='softmax'))
 
         # Compile model
@@ -99,13 +100,13 @@ class NeuralNetwork:
 
         # Fit the model
         model.fit(self.X_train, NEW_y_train,
-                  validation_data=(self.X_test, NEW_y_test), epochs=2, batch_size=1000)
+                  validation_data=(self.X_test, NEW_y_test), epochs=3, batch_size=200)
 
         # Save the model
         print("Saving model...")
         model.save('trainedMNISTModel.h5')
         print("Saved!")
-        # self.save_working_dataset()
+        self.save_working_dataset()
         time.sleep(1)
 
         return 1
@@ -113,8 +114,11 @@ class NeuralNetwork:
     @staticmethod
     def predict_number(image_of_number: str):
         img5 = Image.open(image_of_number).convert("L")
+        img5 = ImageOps.invert(img5)
         im2arr = np.array(img5)
+        NeuralNetwork.generalize_greyscale(im2arr)
         im2arr = im2arr / 255
+        im2arr = np.around(im2arr, 4)
         im2arr = im2arr.reshape((1, 28, 28, 1))
         print(im2arr.shape)
 
@@ -129,9 +133,11 @@ class NeuralNetwork:
 
     def load_images_to_data(self, image_label: str, image_file: str):
         img = Image.open(image_file).convert("L")
-        # img = img.resize(img, 28, 28, 1)
+        img = ImageOps.invert(img)
         im2arr = np.array(img)
+        NeuralNetwork.generalize_greyscale(im2arr)
         im2arr = im2arr / 255
+        im2arr = np.around(im2arr, 4)
         im2arr = im2arr.reshape((1, 28, 28, 1))
 
         self.X_train = np.append(self.X_train, im2arr, axis=0)
@@ -150,16 +156,21 @@ class NeuralNetwork:
 
         return self.X_train, self.y_train, self.X_test, self.y_test
 
+    @staticmethod
+    def generalize_greyscale(img_array):
+        with np.nditer(img_array, op_flags=['readwrite']) as iterator:
+            for each_value in iterator:
+                if each_value <= 10:
+                    each_value[...] = 0
 
-# visualize one number with pixel values
-def visualize_input(img, ax):
-    ax.imshow(img, cmap='gray')
-    width, height = img.shape
-    thresh = img.max() / 2.5
-    for x in range(width):
-        for y in range(height):
-            ax.annotate(str(round(img[x][y][1], 2)), xy=(y, x),
-                        horizontalalignment='center',
-                        verticalalignment='center',
-                        color='white' if img[x][y] < thresh else 'black')
-    # make it happen!
+
+'''
+network1 = NeuralNetwork()
+network2 = NeuralNetwork()
+
+network1.load_clean_dataset()
+network2.load_working_dataset()
+
+network1.train_neural_network()
+network2.train_neural_network()
+'''

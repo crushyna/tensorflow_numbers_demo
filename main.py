@@ -15,7 +15,7 @@ class Main:
         self.counter = 0
         self.master = master
         self.color_fg = 'black'
-        self.color_bg = 'white'
+        self.color_bg = '#ffffff'
         self.old_x = None
         self.old_y = None
         self.penwidth = 32.5
@@ -43,7 +43,7 @@ class Main:
         # file specs
         save_width = 28
         save_height = 28
-        filetitle = 'image.png'
+        filetitle = 'image.bmp'
         global filename
         filename = filetitle
 
@@ -73,7 +73,7 @@ class Main:
         else:
             inp = InputBox(text="Enter proper number and press enter: ")
             print(inp.get)
-            network1.merge_images(inp.get, 'image.png')
+            network1.merge_images(inp.get, filename)
             print('Image appended to dataset.')
             result_answer2 = messagebox.askyesno("Number recognition",
                                                  "Would you like to re-train model with new item?")
