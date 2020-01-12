@@ -13,6 +13,7 @@ from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.utils import to_categorical
 
+# TODO: do some code cleaning!
 
 class NeuralNetwork:
     seed = 7
@@ -38,7 +39,8 @@ class NeuralNetwork:
         return self.X_train, self.X_test
 
     def load_clean_dataset(self):
-        (X_train, y_train), (X_test, y_test) = mnist.load_data(path='MNIST_data')
+        #(X_train, y_train), (X_test, y_test) = mnist.load_data(path='MNIST_data')
+        (X_train, y_train), (X_test, y_test) = mnist.load_data('MNIST_data')
         self.X_train = X_train
         self.y_train = y_train
         self.X_test = X_test
@@ -74,8 +76,8 @@ class NeuralNetwork:
         print(self.y_test.shape)
 
         # normalize inputs from 0-255 to 0-1
-        self.X_train /= 255
-        self.X_test /= 255
+        NEW_X_train = self.X_train / 255
+        NEW_X_test = self.X_test / 255
 
         # one hot encode
         number_of_classes = 10
@@ -84,8 +86,8 @@ class NeuralNetwork:
 
         # create model
         model = Sequential()
-        model.add(Conv2D(32, (5, 5), input_shape=(self.X_train.shape[1],
-                                                  self.X_train.shape[2], 1), activation='relu'))
+        model.add(Conv2D(32, (5, 5), input_shape=(NEW_X_train.shape[1],
+                                                  NEW_X_test.shape[2], 1), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         # model.add(Conv2D(32, (3, 3), activation='relu'))
         # model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -99,14 +101,13 @@ class NeuralNetwork:
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         # Fit the model
-        model.fit(self.X_train, NEW_y_train,
-                  validation_data=(self.X_test, NEW_y_test), epochs=3, batch_size=200)
+        model.fit(NEW_X_train, NEW_y_train,
+                  validation_data=(NEW_X_test, NEW_y_test), epochs=1, batch_size=200) # maybe go with 2 epochs?
 
         # Save the model
         print("Saving model...")
         model.save('trainedMNISTModel.h5')
         print("Saved!")
-        self.save_working_dataset()
         time.sleep(1)
 
         return 1
@@ -136,7 +137,7 @@ class NeuralNetwork:
         img = ImageOps.invert(img)
         im2arr = np.array(img)
         NeuralNetwork.generalize_greyscale(im2arr)
-        im2arr = im2arr / 255
+        # im2arr = im2arr / 255     # not required here
         im2arr = np.around(im2arr, 4)
         im2arr = im2arr.reshape((1, 28, 28, 1))
 
@@ -160,7 +161,7 @@ class NeuralNetwork:
     def generalize_greyscale(img_array):
         with np.nditer(img_array, op_flags=['readwrite']) as iterator:
             for each_value in iterator:
-                if each_value <= 10:
+                if each_value <= 15:
                     each_value[...] = 0
 
 

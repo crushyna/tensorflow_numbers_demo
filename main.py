@@ -58,6 +58,10 @@ class Main:
         image_in = PIL.Image.open(filetitle)
         image_out = image_in.resize((save_width, save_height), PIL.Image.ANTIALIAS)
         image_out.save(filetitle)
+
+        # save working dataset
+        network1.save_working_dataset()
+
         return filename
 
     def clear(self):
