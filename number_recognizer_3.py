@@ -1,5 +1,4 @@
 from os import listdir
-
 import PIL.Image as Image
 from PIL import ImageOps
 import time
@@ -12,6 +11,7 @@ from tensorflow.keras.datasets import mnist
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.utils import to_categorical
+
 
 # TODO: do some code cleaning!
 
@@ -39,7 +39,7 @@ class NeuralNetwork:
         return self.X_train, self.X_test
 
     def load_clean_dataset(self):
-        #(X_train, y_train), (X_test, y_test) = mnist.load_data(path='MNIST_data')
+        # (X_train, y_train), (X_test, y_test) = mnist.load_data(path='MNIST_data')
         (X_train, y_train), (X_test, y_test) = mnist.load_data('MNIST_data')
         self.X_train = X_train
         self.y_train = y_train
@@ -68,7 +68,6 @@ class NeuralNetwork:
         return self.X_train, self.y_train, self.X_test, self.y_test
 
     def train_neural_network(self):
-        # self.reshape()
 
         print(self.X_train.shape)
         print(self.X_test.shape)
@@ -102,7 +101,7 @@ class NeuralNetwork:
 
         # Fit the model
         model.fit(NEW_X_train, NEW_y_train,
-                  validation_data=(NEW_X_test, NEW_y_test), epochs=1, batch_size=200) # maybe go with 2 epochs?
+                  validation_data=(NEW_X_test, NEW_y_test), epochs=2, batch_size=200)  # maybe go with 2 epochs?
 
         # Save the model
         print("Saving model...")

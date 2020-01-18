@@ -4,7 +4,6 @@ from tkinter import *
 from tkinter import ttk, messagebox, simpledialog
 import PIL
 from PIL import ImageGrab, Image
-# from number_recognizer_2 import NeuralNetwork
 from number_recognizer_3 import NeuralNetwork
 
 filename = 'None!'
@@ -40,6 +39,7 @@ class Main:
 
     def save(self):
         sleep(1)
+
         # file specs
         save_width = 28
         save_height = 28
